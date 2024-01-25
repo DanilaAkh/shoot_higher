@@ -1,0 +1,2 @@
+D:\Учеба\проги\above_shoot\Debug\above_shoot.exe
+D:\Учеба\проги\shoot_higher\Debug\shoot_higher.exe

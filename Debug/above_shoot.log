@@ -1,0 +1,18 @@
+﻿D:\Program Files\vs com\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: промежуточный каталог (Debug\) содержит файлы, которые используются совместно с другим проектом (above_shoot.vcxproj).  Это может привести к ошибкам очистки и перестроения.
+  Enemy.cpp
+D:\Учеба\проги\shoot_higher\Enemy.cpp(8,72): warning C4244: аргумент: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+D:\Учеба\проги\shoot_higher\Enemy.cpp(8,53): warning C4244: аргумент: преобразование "int" в "T", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+  main.cpp
+D:\Учеба\проги\shoot_higher\main.cpp(14,22): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+D:\Учеба\проги\shoot_higher\main.cpp(68,47): warning C4244: =: преобразование "sf::Int64" в "float", возможна потеря данных
+  Player.cpp
+  Создание кода...
+  above_shoot.vcxproj -> D:\Учеба\проги\shoot_higher\Debug\shoot_higher.exe
