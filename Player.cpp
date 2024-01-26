@@ -6,6 +6,7 @@ Player::Player()
 	player.setFillColor(sf::Color::Green);	
 	this->player.setPosition(sf::Vector2f(80,80));
 	this->pos = this->player.getPosition();
+	this->weapon = Weapon();
 }
 
 sf::CircleShape& Player::get_shape()
@@ -51,9 +52,37 @@ bool Player::collision(sf::FloatRect obj)
 		return false;
 }
 
-void Player::draw(sf::RenderWindow& win)
+void Player::draw(sf::RenderWindow& win, sf::Font& font)
 {
 	win.draw(this->player);
+	sf::Text bullets_count, health;
+	int bullets = this->weapon.get_bullets();
+	if (bullets == 0)
+	{
+		bullets_count.setPosition(1100, 10);
+		std::wstring str(L"Нет патронов");
+		bullets_count.setString(str);
+		bullets_count.setColor(sf::Color::Red);
+		bullets_count.setFont(font);
+		bullets_count.setCharacterSize(30);
+	}
+	else 
+	{
+		bullets_count.setPosition(1000, 10);
+		std::wstring str(L"Осталось " + std::to_wstring(this->weapon.get_bullets()) + L" патронов");
+		bullets_count.setFont(font);
+		bullets_count.setCharacterSize(30);
+		bullets_count.setString(str);
+		bullets_count.setColor(sf::Color::Blue);
+	}
+	win.draw(bullets_count);
+	health.setFont(font);
+	health.setCharacterSize(30);
+	health.setString(L"Осталось " + std::to_wstring(this->health_points) + L" ХП");
+	health.setCharacterSize(30);
+	health.setColor(sf::Color::Green);
+	health.setPosition(10, 10);
+	win.draw(health);
 }
 
 bool Player::die()
@@ -73,35 +102,11 @@ void Player::restart()
 {
 	player.setPosition(1260, 710);
 	health_points = 3;
-	bullets = 5;
+	this->weapon.set_bullets(5);
 }
 
-sf::CircleShape& Player::shoot(sf::Font &font, sf::RenderWindow& win)
-{	
-	sf::Text bullets_count;
-	
-	if (this->bullets != 0)
-	{
-		--this->bullets;
-		std::wstring str(L"Осталось " + std::to_wstring(this->bullets) + L" патронов");
-		//std::cout << this->bullets << std::endl;
-		bullets_count.setCharacterSize(30);
-		bullets_count.setString(str);
-		bullets_count.setPosition(this->pos.x-25, this->pos.y-25);
-		bullets_count.setColor(sf::Color::Blue);
-		win.draw(bullets_count);
-		sf::CircleShape bullet(5.f);
-		bullet.setFillColor(sf::Color::White);
-		bullet.setPosition(this->pos);
-	}
-	else
-	{
-		std::wstring str(L"Нет патронов");
-		//std::cout << this->bullets << std::endl;
-		bullets_count.setCharacterSize(30);
-		bullets_count.setString(str);
-		bullets_count.setPosition(this->pos);
-		bullets_count.setColor(sf::Color::Red);
-		win.draw(bullets_count);
-	}		
+sf::CircleShape& Player::shoot()
+{
+	return this->weapon.shoot(this->pos);
 }
+

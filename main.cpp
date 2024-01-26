@@ -51,7 +51,7 @@ int main()
 
 	
 	Player player;
-	
+	sf::CircleShape bull;
 
 	std::vector<Enemy> v;
 	int count_enemy = std::rand() % 3 + 2;
@@ -109,7 +109,7 @@ int main()
 				break;
 
 			case sf::Event::MouseButtonPressed:
-				if (event.key.code == sf::Mouse::Left) player.shoot(game_font, window);
+				if (event.key.code == sf::Mouse::Left) bull = player.shoot();
 			default:break;
 			}
 		}
@@ -135,10 +135,11 @@ int main()
 			for (auto it = v.begin(); it != v.end(); ++it)
 			{
 				it->move(time_enemy, player);
-				if (player.collision(it->get_enemy_bounds())) game_over = player.die();		// Проверка на столкновение с противником
+				if (player.collision(it->get_enemy_bounds())) game_over = player.die();				// Проверка на столкновение с противником
 			}
-			player.draw(window);															//отображение игрока
-			for (auto it = v.begin(); it != v.end(); ++it) it->draw(window);				// отображение противников		
+			player.draw(window, game_font);															//отображение игрока
+			for (auto it = v.begin(); it != v.end(); ++it) it->draw(window);						// отображение противников
+			window.draw(bull);					
 		}			
 		
 		
