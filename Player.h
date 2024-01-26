@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#pragma warning(disable : 4996)
 
 class Player
 {
@@ -15,6 +16,8 @@ public:
 	bool die();
 	void set_position(float, float);
 	void restart();
+	sf::CircleShape& shoot(sf::Font&, sf::RenderWindow&);
+
 
 private:
 	sf::Vector2f pos;

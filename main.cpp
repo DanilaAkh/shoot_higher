@@ -14,29 +14,32 @@ int main()
 	std::srand(std::time(nullptr));
 	const int WIDTH = 1280;
 	const int HEIGHT = 720;
-	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), L"Стреляй выше");
-	
+	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), L"Стреляй выше", sf::Style::Default);
+	window.setVerticalSyncEnabled(true);
+
+
 	sf::Font game_font;
 	if (!game_font.loadFromFile("Fonts/calibri.ttf")) return 1;
 
 	
 	sf::Image icon;
-	icon.loadFromFile("Image/asd.png");
+	icon.loadFromFile("Image/я.jpg");
 	
 	window.setIcon(32,32, icon.getPixelsPtr());
 
 
-	sf::Text lose_game("hello", game_font, 30), text_game_paused;
+	sf::Text lose_game(L"Вы проиграли", game_font, 32);
+	sf::Text text_game_paused;
 
 	lose_game.setFont(game_font);
 	lose_game.setColor(sf::Color::Red);
-	lose_game.setPosition(15, 15);	
+	lose_game.setPosition(WIDTH / 2 - 85, HEIGHT / 2 - 50);
 
-	text_game_paused.setString(L"pause");
+	text_game_paused.setString(L"ПАУЗА");
 	text_game_paused.setFont(game_font);
 	text_game_paused.setColor(sf::Color::Cyan);	
-	text_game_paused.setCharacterSize(25);
-	text_game_paused.setPosition(115,115);
+	text_game_paused.setCharacterSize(30);
+	text_game_paused.setPosition(WIDTH / 2 - 50, HEIGHT / 2 - 50);
 
 
 
@@ -64,14 +67,14 @@ int main()
 
 	while (window.isOpen())
 	{
-		sf::Event event;
+		
 		time = clock.getElapsedTime().asMicroseconds();
 		time_player = time / 6000;
 		time_enemy = time / 10000;
 		clock.restart();
 
 
-
+		sf::Event event;
 		while (window.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed) window.close();
@@ -105,40 +108,39 @@ int main()
 				if (event.key.code == sf::Keyboard::D) move_rec.x = 0;
 				break;
 
+			case sf::Event::MouseButtonPressed:
+				if (event.key.code == sf::Mouse::Left) player.shoot(game_font, window);
 			default:break;
 			}
 		}
 		
 		if (game_over)
 		{			
-			game_over = false;
-			
+			window.clear();
+			window.draw(lose_game);				// отображение проигрыша
 
-			player.restart(); // перезапуск
-			
+			player.restart();					// перезапуск
+			for (auto it = v.begin(); it != v.end(); ++it) it->restart();
 		}
 		else if (game_paused)
 		{
-			
+			window.draw(text_game_paused);		// отображение паузы
 		}
 		else
 		{
-			window.draw(lose_game);				// отображение проигрыша
-			window.draw(text_game_paused);		// отображение паузы
+			window.clear();			
+			
 			player.move(move_rec);
 			window.draw(player.get_shape());
 			for (auto it = v.begin(); it != v.end(); ++it)
 			{
 				it->move(time_enemy, player);
-				if (player.collision(it->get_enemy_bounds())) game_over = player.die(); // Проверка на столкновение с противником
+				if (player.collision(it->get_enemy_bounds())) game_over = player.die();		// Проверка на столкновение с противником
 			}
-			window.clear();
-		}	
+			player.draw(window);															//отображение игрока
+			for (auto it = v.begin(); it != v.end(); ++it) it->draw(window);				// отображение противников		
+		}			
 		
-		
-
-		player.draw(window); //отображение игрока
-		for (auto it = v.begin(); it != v.end(); ++it) it->draw(window); // отображение противников
 		
 		window.display();
 	}

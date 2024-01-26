@@ -2,7 +2,7 @@
 
 Player::Player()
 {
-	this->player = sf::CircleShape(5.f);
+	this->player = sf::CircleShape(10.f);
 	player.setFillColor(sf::Color::Green);	
 	this->player.setPosition(sf::Vector2f(80,80));
 	this->pos = this->player.getPosition();
@@ -74,4 +74,34 @@ void Player::restart()
 	player.setPosition(1260, 710);
 	health_points = 3;
 	bullets = 5;
+}
+
+sf::CircleShape& Player::shoot(sf::Font &font, sf::RenderWindow& win)
+{	
+	sf::Text bullets_count;
+	
+	if (this->bullets != 0)
+	{
+		--this->bullets;
+		std::wstring str(L"Осталось " + std::to_wstring(this->bullets) + L" патронов");
+		//std::cout << this->bullets << std::endl;
+		bullets_count.setCharacterSize(30);
+		bullets_count.setString(str);
+		bullets_count.setPosition(this->pos.x-25, this->pos.y-25);
+		bullets_count.setColor(sf::Color::Blue);
+		win.draw(bullets_count);
+		sf::CircleShape bullet(5.f);
+		bullet.setFillColor(sf::Color::White);
+		bullet.setPosition(this->pos);
+	}
+	else
+	{
+		std::wstring str(L"Нет патронов");
+		//std::cout << this->bullets << std::endl;
+		bullets_count.setCharacterSize(30);
+		bullets_count.setString(str);
+		bullets_count.setPosition(this->pos);
+		bullets_count.setColor(sf::Color::Red);
+		win.draw(bullets_count);
+	}		
 }

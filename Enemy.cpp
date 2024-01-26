@@ -3,7 +3,7 @@
 
 Enemy::Enemy()
 {
-	this->enemy = sf::CircleShape(5.f);
+	this->enemy = sf::CircleShape(10.f);
 	enemy.setFillColor(sf::Color::Red);
 	this->enemy.setPosition(sf::Vector2f(rand() % 1260 + 20, rand() % 700 + 10));
 }
@@ -17,9 +17,13 @@ void Enemy::move(float time, Player player)
 {
 	sf::Vector2f pos1 = player.get_pos();
 	sf::Vector2f razn = sf::Vector2f(pos1.x - this->pos.x, pos1.y - this->pos.y);
-	sf::Vector2f move_rec(-1 + (int(razn.x) % 3) * time, (-1 + int(razn.y) % 3) * time); //  переделать для следования за игроком
+	sf::Vector2f move_rec; 
 
-	
+
+	if (razn.x >= 0 && razn.y >= 0) { move_rec.x = time; move_rec.y = time; }
+	else if (razn.x < 0 && razn.y >= 0) { move_rec.x = -time; move_rec.y = time; }
+	else if (razn.x >= 0 && razn.y < 0) { move_rec.x = time; move_rec.y = -time; }
+	else if (razn.x < 0 && razn.y < 0) { move_rec.x = -time; move_rec.y = -time; }
 
 
 	this->enemy.move(move_rec);
@@ -53,4 +57,9 @@ void Enemy::draw(sf::RenderWindow& win)
 sf::FloatRect Enemy::get_enemy_bounds()
 {
 	return enemy.getGlobalBounds();
+}
+
+void Enemy::restart()
+{
+	this->enemy.setPosition(sf::Vector2f(rand() % 1260 + 20, rand() % 700 + 10));
 }
