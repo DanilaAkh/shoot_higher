@@ -8,11 +8,11 @@ class Weapon
 {
 public:
 	Weapon();
-	sf::CircleShape& shoot(sf::Vector2f);
+	sf::CircleShape shoot(sf::Vector2f, sf::Vector2i);
 	int get_bullets();
 	void set_bullets(int bullets);
 
 private:
-	int bullets = 5;
+	int bullets;
 };
 

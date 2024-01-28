@@ -23,6 +23,7 @@ void Player::move(sf::Vector2f move_rec)
 {
 	this->player.move(move_rec);
 	this->pos = this->player.getPosition();
+	
 
 
 	// Проверка рамок-----------------------------------------
@@ -39,7 +40,7 @@ void Player::move(sf::Vector2f move_rec)
 
 sf::Vector2f Player::get_pos()
 {
-	return this->pos;
+	return this->player.getPosition();
 }
 
 bool Player::collision(sf::FloatRect obj)
@@ -105,8 +106,8 @@ void Player::restart()
 	this->weapon.set_bullets(5);
 }
 
-sf::CircleShape& Player::shoot()
+sf::CircleShape Player::shoot(sf::Vector2i mouse_pos)
 {
-	return this->weapon.shoot(this->pos);
+	return this->weapon.shoot(this->pos, mouse_pos);
 }
 

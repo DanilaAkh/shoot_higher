@@ -18,7 +18,7 @@ public:
 	bool die();
 	void set_position(float, float);
 	void restart();
-	sf::CircleShape& shoot();
+	sf::CircleShape shoot(sf::Vector2i);
 
 private:
 	sf::Vector2f pos;

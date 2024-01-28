@@ -12,6 +12,7 @@
 int main()
 {
 	std::srand(std::time(nullptr));
+	const float PI = atan(1) * 4;
 	const int WIDTH = 1280;
 	const int HEIGHT = 720;
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), L"Стреляй выше", sf::Style::Default);
@@ -28,12 +29,12 @@ int main()
 	window.setIcon(32,32, icon.getPixelsPtr());
 
 
-	sf::Text lose_game(L"Вы проиграли", game_font, 32);
+	sf::Text lose_game(L"Вы проиграли", game_font, 45);
 	sf::Text text_game_paused;
 
 	lose_game.setFont(game_font);
 	lose_game.setColor(sf::Color::Red);
-	lose_game.setPosition(WIDTH / 2 - 85, HEIGHT / 2 - 50);
+	lose_game.setPosition(WIDTH / 2 - 100, HEIGHT / 2 - 50);
 
 	text_game_paused.setString(L"ПАУЗА");
 	text_game_paused.setFont(game_font);
@@ -52,6 +53,7 @@ int main()
 	
 	Player player;
 	sf::CircleShape bull;
+	sf::Vector2f  dist_Shot_Position;
 
 	std::vector<Enemy> v;
 	int count_enemy = std::rand() % 3 + 2;
@@ -108,8 +110,17 @@ int main()
 				if (event.key.code == sf::Keyboard::D) move_rec.x = 0;
 				break;
 
-			case sf::Event::MouseButtonPressed:
-				if (event.key.code == sf::Mouse::Left) bull = player.shoot();
+			case sf::Event::MouseButtonReleased:
+				if (event.key.code == sf::Mouse::Left)
+				{
+					sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+					float dx = mouse_pos.x - player.get_pos().x;
+					float dy = mouse_pos.y - player.get_pos().y;
+					float angle = atan2f(dy, dx);
+					dist_Shot_Position.x = cos(angle) * time_player;				//todo доделать траекторию, переделать противников
+					dist_Shot_Position.y = sin(angle) * time_player;
+					bull = player.shoot(mouse_pos);
+				}
 			default:break;
 			}
 		}
@@ -129,20 +140,23 @@ int main()
 		else
 		{
 			window.clear();			
-			
+						
+			player.draw(window, game_font);
 			player.move(move_rec);
-			window.draw(player.get_shape());
-			for (auto it = v.begin(); it != v.end(); ++it)
-			{
-				it->move(time_enemy, player);
-				if (player.collision(it->get_enemy_bounds())) game_over = player.die();				// Проверка на столкновение с противником
-			}
-			player.draw(window, game_font);															//отображение игрока
-			for (auto it = v.begin(); it != v.end(); ++it) it->draw(window);						// отображение противников
-			window.draw(bull);					
+						
+			window.draw(bull);
+			bull.move(dist_Shot_Position);
+
+			//for (auto it = v.begin(); it != v.end(); ++it)
+			//{
+			//	it->move(time_enemy, player);
+			//	it->draw(window);						// отображение противников
+			//	if (player.collision(it->get_enemy_bounds())) game_over = player.die();				// Проверка на столкновение с противником
+			//}
+						
+			
 		}			
-		
-		
+				
 		window.display();
 	}
 	return 0;
