@@ -4,8 +4,21 @@
 
 #include "Player.h"
 #include "Enemy.h"
+#include "Bullet.h"
 
 #pragma warning(disable : 4996)
+
+std::vector<Enemy>& new_enemies(std::vector<Enemy>& v, int& count_enemy)
+{
+	v.clear();
+	count_enemy = std::rand() % 3 + 2;
+	for (int i = 0; i < count_enemy; ++i)
+	{
+		Enemy enemy;
+		v.push_back(enemy);
+	}
+	return v;
+}
 
 
 
@@ -43,26 +56,28 @@ int main()
 	text_game_paused.setPosition(WIDTH / 2 - 50, HEIGHT / 2 - 50);
 
 
+	sf::RectangleShape bullet_spot(sf::Vector2f(15.f, 15.f));
+	sf::Texture bullet_texture;
+	bullet_texture.loadFromFile("Image/loading.jpg");
+	bullet_spot.setTexture(&bullet_texture);
+	bullet_spot.setPosition(sf::Vector2f(rand() % 1260 + 20, rand() % 700 + 10));
+
 
 	bool game_over = false, game_paused = false;
-
+	int score = 0;
 
 	sf::Clock clock;
 	float time, time_player, time_enemy;
 
 	
 	Player player;
-	sf::CircleShape bull;
+	Bullet bull;
 	sf::Vector2f  dist_Shot_Position;
 
+	int count_enemy;
 	std::vector<Enemy> v;
-	int count_enemy = std::rand() % 3 + 2;
-
-	for (int i = 0; i < count_enemy; ++i)
-	{
-		Enemy enemy;
-		v.push_back(enemy);
-	}
+	new_enemies(v, count_enemy);
+	
 
 	sf::Vector2f move_rec;
 
@@ -99,7 +114,11 @@ int main()
 					if (game_over == false)
 						game_over = true;
 					else
+					{
 						game_over = false;
+						lose_game.setString(L"Вы проиграли");
+						score = 0;
+					}
 				}
 				break;
 			case sf::Event::KeyReleased:
@@ -117,9 +136,9 @@ int main()
 					float dx = mouse_pos.x - player.get_pos().x;
 					float dy = mouse_pos.y - player.get_pos().y;
 					float angle = atan2f(dy, dx);
-					dist_Shot_Position.x = cos(angle) * time_player;				//todo доделать траекторию, переделать противников
-					dist_Shot_Position.y = sin(angle) * time_player;
-					bull = player.shoot(mouse_pos);
+					dist_Shot_Position.x = cos(angle) * time_player*5;				
+					dist_Shot_Position.y = sin(angle) * time_player*5;
+					bull.shoot(player.get_pos());
 				}
 			default:break;
 			}
@@ -128,9 +147,13 @@ int main()
 		if (game_over)
 		{			
 			window.clear();
-			window.draw(lose_game);				// отображение проигрыша
+			
+			window.draw(lose_game);															// отображение проигрыша
+			
+			new_enemies(v, count_enemy);
+			bullet_spot.setPosition(sf::Vector2f(rand() % 1260 + 20, rand() % 700 + 10));
 
-			player.restart();					// перезапуск
+			player.restart(bull);																// перезапуск
 			for (auto it = v.begin(); it != v.end(); ++it) it->restart();
 		}
 		else if (game_paused)
@@ -141,19 +164,36 @@ int main()
 		{
 			window.clear();			
 						
-			player.draw(window, game_font);
+			player.draw(window, game_font, bull);
 			player.move(move_rec);
 						
-			window.draw(bull);
+			bull.draw(window);
 			bull.move(dist_Shot_Position);
 
-			//for (auto it = v.begin(); it != v.end(); ++it)
-			//{
-			//	it->move(time_enemy, player);
-			//	it->draw(window);						// отображение противников
-			//	if (player.collision(it->get_enemy_bounds())) game_over = player.die();				// Проверка на столкновение с противником
-			//}
-						
+			window.draw(bullet_spot);
+
+			for (auto it = v.begin(); it != v.end(); ++it)
+			{
+				it->move(time_enemy, player);
+				it->draw(window);																			// отображение противников
+				if (player.collision(it->get_enemy_bounds())) 
+				{	
+					game_over = player.die();
+					if (game_over) lose_game.setString(lose_game.getString() + "\n" + L"Итог: " + std::to_string(score) + L" очков!");
+				}				
+				if (it->collision(bull.get_bullet_bounds()))
+				{
+					it->die();
+					++score;
+					--count_enemy;					
+				}
+			}
+			if (count_enemy == 0) new_enemies(v, count_enemy);			
+			if (player.collision(bullet_spot.getGlobalBounds())) 
+			{ 
+				bull.set_bullets(5); 
+				bullet_spot.setPosition(sf::Vector2f(rand() % 1260 + 20, rand() % 700 + 10));
+			}
 			
 		}			
 				

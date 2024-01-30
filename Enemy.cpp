@@ -15,15 +15,17 @@ sf::CircleShape& Enemy::get_shape()
 
 void Enemy::move(float time, Player player)
 {
-	sf::Vector2f pos1 = player.get_pos();
-	sf::Vector2f razn = sf::Vector2f(pos1.x - this->pos.x, pos1.y - this->pos.y);
-	sf::Vector2f move_rec; 
+	sf::Vector2f move_rec;
+	float angle = atan2f(player.get_pos().y - this->pos.y, player.get_pos().x - this->pos.x);
+
+	move_rec.x = cos(angle) * time;
+	move_rec.y = sin(angle) * time;
 
 
-	if (razn.x >= 0 && razn.y >= 0) { move_rec.x = time; move_rec.y = time; }
-	else if (razn.x < 0 && razn.y >= 0) { move_rec.x = -time; move_rec.y = time; }
-	else if (razn.x >= 0 && razn.y < 0) { move_rec.x = time; move_rec.y = -time; }
-	else if (razn.x < 0 && razn.y < 0) { move_rec.x = -time; move_rec.y = -time; }
+	//if (razn.x >= 0 && razn.y >= 0) { move_rec.x = time; move_rec.y = time; }
+	//else if (razn.x < 0 && razn.y >= 0) { move_rec.x = -time; move_rec.y = time; }
+	//else if (razn.x >= 0 && razn.y < 0) { move_rec.x = time; move_rec.y = -time; }
+	//else if (razn.x < 0 && razn.y < 0) { move_rec.x = -time; move_rec.y = -time; }
 
 
 	this->enemy.move(move_rec);
@@ -62,4 +64,10 @@ sf::FloatRect Enemy::get_enemy_bounds()
 void Enemy::restart()
 {
 	this->enemy.setPosition(sf::Vector2f(rand() % 1260 + 20, rand() % 700 + 10));
+}
+
+bool Enemy::die()
+{
+	enemy.setRadius(0);
+	return false;
 }

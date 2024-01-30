@@ -13,6 +13,7 @@ public:
 	void draw(sf::RenderWindow& win);
 	sf::FloatRect get_enemy_bounds();
 	void restart();
+	bool die();
 
 private:
 	sf::Vector2f pos;

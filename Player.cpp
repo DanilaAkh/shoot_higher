@@ -5,8 +5,7 @@ Player::Player()
 	this->player = sf::CircleShape(10.f);
 	player.setFillColor(sf::Color::Green);	
 	this->player.setPosition(sf::Vector2f(80,80));
-	this->pos = this->player.getPosition();
-	this->weapon = Weapon();
+	this->pos = this->player.getPosition();	
 }
 
 sf::CircleShape& Player::get_shape()
@@ -53,11 +52,11 @@ bool Player::collision(sf::FloatRect obj)
 		return false;
 }
 
-void Player::draw(sf::RenderWindow& win, sf::Font& font)
+void Player::draw(sf::RenderWindow& win, sf::Font& font, Bullet bullet)
 {
 	win.draw(this->player);
 	sf::Text bullets_count, health;
-	int bullets = this->weapon.get_bullets();
+	int bullets = bullet.get_bullets();
 	if (bullets == 0)
 	{
 		bullets_count.setPosition(1100, 10);
@@ -70,7 +69,7 @@ void Player::draw(sf::RenderWindow& win, sf::Font& font)
 	else 
 	{
 		bullets_count.setPosition(1000, 10);
-		std::wstring str(L"Осталось " + std::to_wstring(this->weapon.get_bullets()) + L" патронов");
+		std::wstring str(L"Осталось " + std::to_wstring(bullet.get_bullets()) + L" патронов");
 		bullets_count.setFont(font);
 		bullets_count.setCharacterSize(30);
 		bullets_count.setString(str);
@@ -99,15 +98,11 @@ void Player::set_position(float x, float y)
 	player.setPosition(x, y);
 }
 
-void Player::restart()
+void Player::restart(Bullet& bullet)
 {
-	player.setPosition(1260, 710);
+	player.setPosition(640, 360);
 	health_points = 3;
-	this->weapon.set_bullets(5);
+	bullet.set_bullets(5);
 }
 
-sf::CircleShape Player::shoot(sf::Vector2i mouse_pos)
-{
-	return this->weapon.shoot(this->pos, mouse_pos);
-}
 
